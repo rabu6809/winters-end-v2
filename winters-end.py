@@ -122,12 +122,22 @@ flee - REQUIRES STUNNED ENEMY attempt to flee battle""")
         action = input("Your move: ")
         if action == "light":
             enemy.takeDamage(player.dmgLight)
+            turns = turns - 1
         elif action == "lightc":
             enemy.takeDamage(player.dmgLight)
             enemy.takeDamage(player.dmgLight)
             enemy.takeDamage(round(player.dmgLight*1.5))
+            turns = turns - 3
         elif action == "heavy":
             enemy.takeDamage(player.dmgHeavy)
+            turns = turns - 2
+        elif action == "parry":
+            parry = True
+            turns = 0
+        elif action == "shove":
+            shove = True
+            turns = 0
+
 print("Welcome to Winter's End")
 print("""Status effects:
 FRACTURE disables shoves.
