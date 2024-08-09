@@ -10,6 +10,7 @@ class protagonist:
         self.cripple = 0
         self.fracture = 0
         self.bleed = 0
+        self.isDead = False
         self.artery = 0
         self.i4s = 0
         self.meleeDefenseMulti = 1
@@ -95,6 +96,7 @@ class hostileHuman:
         self.ranged = ranged
         self.maxHp = hp
         self.parry = False
+        self.resistmulti = 1
 
     def displayStats(self):
         print(f"Enemy - HP {self.hp}/{self.maxHp}")
@@ -117,7 +119,7 @@ class hostileHuman:
 
 
 def battle(name, hp, lightDamage, heavyDamage, canShove, canParry, isRanged):
-    enemy = hostileHuman(HP, lightDamage, heavyDamage, canShove, canParry,
+    enemy = hostileHuman(hp, lightDamage, heavyDamage, canShove, canParry,
                          isRanged)
     print(f"{name} blocks your way.")
     while enemy.hp > 0:
@@ -169,11 +171,6 @@ perkChoice = input("Input perk ID: ")
 if perkChoice == "":
     perkChoice = "3"
 player = protagonist(int(perkChoice))
-player.debuffProt(4)
-player.debuffProt(3)
-player.debuffProt(2)
-player.debuffProt(1)
-player.damageProt(15)
 player.displayStats()
 night = 1
 while player.isDead == False:
