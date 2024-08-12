@@ -148,6 +148,8 @@ def battle(name, hp, lightDamage, heavyDamage, canShove, canParry, isRanged):
     enemy = hostileHuman(hp, lightDamage, heavyDamage, canShove, canParry,
                          isRanged)
     print(f"{name} blocks your way.")
+    parry = False
+    shove = False
     while enemy.hp > 0:
         player.displayStats()
         player.turn()
@@ -160,31 +162,39 @@ heavy - inefficient, powerful, consumes 2 turns
 shove - stun enemy to flee, ends turn
 parry - ends turn, block attack chance to stun
 flee - REQUIRES STUNNED ENEMY attempt to flee battle""")
-        action = input("Your move: ")
-        # Player actions
-        if action == "light":
-            enemy.takeDamage(player.dmgLight)
-            turns = turns - 1
-        elif action == "lightc":
-            enemy.takeDamage(player.dmgLight)
-            enemy.takeDamage(player.dmgLight)
-            enemy.takeDamage(round(player.dmgLight * 1.5))
-            turns = turns - 3
-        elif action == "heavy":
-            enemy.takeDamage(player.dmgHeavy)
-            turns = turns - 2
-        elif action == "parry":
-            parry = True
-            turns = 0
-        elif action == "shove":
-            shove = True
-            turns = 0
-        elif action == "flee":
-            if enemy.hp > enemy.maxHp / 2 and not shove:
-                print("Enemy is too powerful, you can't flee.")
+        while turns > 0:
+            action = input("Your move: ")
+            # Player actions
+            if action == "light":
+                enemy.takeDamage(player.dmgLight)
+                print(f"You hit the enemy with a {player.dmgLight} damage light attack.")
+                turns = turns - 1
+            elif action == "lightc":
+                enemy.takeDamage(player.dmgLight)
+                print(f"You hit the enemy with a {player.dmgLight} damage light attack.")
+                enemy.takeDamage(player.dmgLight)
+                print(f"You hit the enemy with a {player.dmgLight} damage light attack.")
+                enemy.takeDamage(round(player.dmgLight * 1.5))
+                print(f"You hit the enemy with a {round(player.dmgLight * 1.5)} damage light attack.")
+                turns = turns - 3
+            elif action == "heavy":
+                enemy.takeDamage(player.dmgHeavy)
+                print(f"You hit the enemy with a {player.dmgHeavy} damage heavy attack.")
+                turns = turns - 2
+            elif action == "parry":
+                parry = True
+                turns = 0
+            elif action == "shove":
+                shove = True
+                turns = 0
+            elif action == "flee":
+                if enemy.hp > enemy.maxHp / 2 and not shove:
+                    print("Enemy is too powerful, you can't flee.")
+                else:
+                    print("You flee, running away.")
+                    return
             else:
-                print("You flee, running away.")
-                return
+                print("Invalid action.")
         # Enemy's turn
         turns = 3
         print(f"Enemy's turn: {turns}")
@@ -193,24 +203,32 @@ flee - REQUIRES STUNNED ENEMY attempt to flee battle""")
             # Enemy actions
             if enemyAction == 1 and turns >= 1 and not shove:
                 print("Enemy attacked with light attack")
-                player.damageProt(enemy.lightDamage)
+                if parry:
+                    print("You blocked the attack.")
+                    enemy.takeShove()
+                else:
+                    player.damageProt(enemy.lightDamage)
                 turns = turns - 1
             elif enemyAction == 2 and turns >= 2 and not shove:
                 print("Enemy attacked with heavy attack")
-                player.damageProt(enemy.heavyDamage)
+                if parry:
+                    print("You blocked the attack.")
+                    enemy.takeShove()
+                else:
+                    player.damageProt(enemy.heavyDamage)
                 turns = turns - 2
             elif enemyAction == 3 and canShove and turns >= 1 and not shove:
                 print("Enemy shoved you")
-                player.damageProt(enemy.lightDamage)
-                player.debuffProt(3)
+                if parry:
+                    print("You blocked the attack.")
+                    enemy.takeShove()
+                else:
+                    player.damageProt(enemy.lightDamage)
+                    player.debuffProt(3)
                 turns = 0
             elif enemyAction == 4 and canParry and turns >= 1 and not shove:
                 print("Enemy is parrying")
                 enemy.beginParry()
-                turns = 0
-            elif enemyAction == 4 and canParry and turns >= 1 and shove and not isRanged:
-                print("You think you can parry a punch?")
-                enemy.takeShove()
                 turns = 0
             elif enemyAction == 4 and canParry and turns >= 1 and shove and isRanged:
                 print("You think you can parry a bullet?")
@@ -441,7 +459,7 @@ while gameLoop:
             battle("Crowbar Scav", 100, 4, 6, True, False, False)
             battle("Combat Knife Scav", 35, 4, 6, True, False, False)
             battle("Combat Knife Scav", 35, 4, 6, True, False, False)
-    elif night = 5:
+    elif night == 5:
         print("Night 5. Things are getting even tougher. Brace yourself.")
         battle("AK Scav", 45, 5, 5, True, True, False)
         battle("Crowbar Scav", 100, 4, 6, True, False, False, "Gordon Freeman")
